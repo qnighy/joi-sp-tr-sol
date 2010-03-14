@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Territory Visualizer</title>
+        <script type="text/javascript">//<![CDATA[
+            var dw = 800;
+            var dh = 800;
+            function visualize() {
+                var canvas = document.getElementById("canv");
+                canvas.setAttribute("width", dw+"px");
+                canvas.setAttribute("height", dh+"px");
+
+                var ctx = canvas.getContext("2d");
+
+                ctx.fillStyle = "rgb(255,255,255)";
+                ctx.fillRect(0,0,dw,dh);
+
+                var lines = document.getElementById("indata").value.split("\n");
+                var pos = [[0,0]];
+                var range = [0,0,0,0];
+                var xy = [0,0];
+                for(var i = 0; i < lines.length; i++) {
+                    if(lines[i] == 'E') {
+                        xy[0]++;
+                    } else if(lines[i]=='S') {
+                        xy[1]++;
+                    } else if(lines[i]=='W') {
+                        xy[0]--;
+                    } else if(lines[i]=='N') {
+                        xy[1]--;
+                    } else if(lines[i]=='Q') {
+                        break;
+                    }
+                    pos.push([xy[0],xy[1]]);
+                    range[0]=Math.min(range[0],xy[0]-1);
+                    range[1]=Math.min(range[1],xy[1]-1);
+                    range[2]=Math.max(range[2],xy[0]+1);
+                    range[3]=Math.max(range[3],xy[1]+1);
+                }
+                ctx.strokeStyle = "rgb(0,0,0)";
+                ctx.beginPath();
+                var xsize = Math.max(range[2]-range[0],range[3]-range[1]);
+                var ysize = xsize;
+                ctx.moveTo((-range[0])*dw/xsize, (-range[1])*dh/ysize);
+                for(var i = 1; i < pos.length; i++) {
+                    ctx.lineTo((pos[i][0]-range[0])*dw/xsize, (pos[i][1]-range[1])*dh/ysize);
+                }
+                ctx.stroke();
+            }
+        //]]></script>
+    </head>
+    <body>
+        <textarea id="indata" rows="20" cols="40">
+S
+W
+W
+N
+E
+E
+E
+S
+E
+N
+W
+Q
+</textarea>
+        <input type="button" value="visualize" onclick="visualize()"><br>
+        <canvas id="canv"></canvas>
+    </body>
+</html>
+
